@@ -224,7 +224,20 @@ module.exports = function(grunt) {
           stdio: 'inherit'
         }
       },
+                 
       function(error, result, code) {
+      
+          getCoverageData(function(payload){
+            try{
+              var filename=path.normalize([coverageDir,'/'+coverageFilename+'.json'].join(''));
+              fs.writeFileSync(filename, payload);
+            }catch(e){
+              grunt.log.error("Got error: " + e.message);
+            } finally {
+              done();
+              done = null;
+            }
+          });
 
           if (error) {
             grunt.log.error(String(result));
@@ -237,17 +250,7 @@ module.exports = function(grunt) {
               grunt.warn('Tests failed, protractor exited with code: ' + code, code);
             }
           }
-          getCoverageData(function(payload){
-            try{
-              var filename=path.normalize([coverageDir,'/'+coverageFilename+'.json'].join(''));
-              fs.writeFileSync(filename, payload);
-            }catch(e){
-              grunt.log.error("Got error: " + e.message);
-            } finally {
-              done();
-              done = null;
-            }
-          });
+          
       }
     );
   });
